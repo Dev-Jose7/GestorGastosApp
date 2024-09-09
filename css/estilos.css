@@ -1,0 +1,21 @@
+.contenedor{
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.transacciones{
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.transacciones fieldset{
+    width: 50%;
+}
+
+.transaccion{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/estilos.css">
+
+    <title>Document</title>
+</head>
+<body>
+
+    <main class="contenedor">
+        <fieldset>
+            <legend>Añadir transacción</legend>
+            <input type="text" placeholder="Descripcion" id="descripcion">
+            <input type="number" placeholder="Valor" min="0" id="valor">            <select id="tipo">
+                <option disabled selected>Tipo</option>
+                <option value="ingreso">Ingreso</option>
+                <option value="gasto">Gasto</option>
+            </select>
+            <button id="añadir">Añadir</button>
+        </fieldset>
+    
+        <div class="transacciones">
+            <fieldset id="campoIngresos">
+                <legend >Ingresos</legend>
+
+                <!-- <div class="transaccion">
+                    <h3>Descripcion</h3>
+                    <p>Valor</p>
+                    <div>
+                        <button>Eliminar</button>
+                    </div>
+                </div> -->
+            </fieldset>
+            
+            
+            <fieldset id="campoGastos">
+                <legend>Gastos</legend>
+            </fieldset>
+        </div>
+    </main>
+
+    <script src="js/Transaccion.js"></script>
+    <script src="js/Ingreso.js"></script>
+    <script src="js/Gastos.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
