@@ -10,33 +10,51 @@
 <body>
 
     <main class="contenedor">
+        <fieldset class="balance">
+            <legend>Balance</legend>
+            <div>
+                <h2>Saldo: <span id="saldo">0.00</span></h2>
+            </div>
+
+            <div class="balance__tipo">
+                <h3>Ingresos: <span id="valorIngreso">0</span></h3>
+                <h3>Gastos: <span id="valorGasto">0</span></h3>
+            </div>
+        </fieldset>
+
         <fieldset>
             <legend>Añadir transacción</legend>
-            <input type="text" placeholder="Descripcion" id="descripcion">
-            <input type="number" placeholder="Valor" min="0" id="valor">            <select id="tipo">
-                <option disabled selected>Tipo</option>
-                <option value="ingreso">Ingreso</option>
-                <option value="gasto">Gasto</option>
-            </select>
-            <button id="añadir">Añadir</button>
+            <div style="text-align: center;">
+                <select id="tipo">
+                    <option disabled selected>Tipo</option>
+                    <option value="ingreso">Ingreso</option>
+                    <option value="gasto">Gasto</option>
+                </select>
+                <input type="number" placeholder="Valor" min="0" id="valor">
+                <input type="text" placeholder="Descripcion" id="descripcion">      
+                <select id="categoria">
+                    <option disabled selected>Categoría</option>
+                    <option value="salario">Salario</option>
+                    <option value="bono">Bono</option>
+                    <option value="arriendo">Arriendo</option>
+                    <option value="servicios">Servicios</option>
+                </select>
+                <button id="añadir">Añadir</button>
+            </div>
         </fieldset>
     
         <div class="transacciones">
             <fieldset id="campoIngresos">
                 <legend >Ingresos</legend>
 
-                <!-- <div class="transaccion">
-                    <h3>Descripcion</h3>
-                    <p>Valor</p>
-                    <div>
-                        <button>Eliminar</button>
-                    </div>
-                </div> -->
+                <p>Sin transacciones</p>
             </fieldset>
             
             
             <fieldset id="campoGastos">
                 <legend>Gastos</legend>
+
+                <p>Sin transacciones</p>
             </fieldset>
         </div>
     </main>
