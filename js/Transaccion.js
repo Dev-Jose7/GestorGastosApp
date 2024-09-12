@@ -44,7 +44,7 @@ class Transaccion{
         console.log(valor);
     }
 
-    agregarTransaccion(vector, contenedor){
+    imprimirTransaccion(vector, contenedor){
         if(contenedor.id == "campoIngresos"){
             contenedor.innerHTML = '<legend>Ingresos</legend>';
         }else if(contenedor.id == "campoGastos"){
@@ -53,7 +53,7 @@ class Transaccion{
 
         for(let objeto of vector){
             let elemento = `
-                <div class="transaccion">
+                <div class="transaccion" data-tipo="${objeto._tipo}">
                     <h3>${objeto._categoria}</h3>
                     <p>${objeto._valor}</p>
                     <h4>${objeto._descripcion}</h4>
@@ -79,8 +79,7 @@ class Transaccion{
 
         contenedor.addEventListener("click", (e) => {
             if(e.target.id == "modificar"){
-                let id = +e.target.className;
-                this.modificarTransaccion(e, vector, id, contenedor);
+                this.modificarTransaccion(e);
                 this.sumarTransaccion(vector);
             }
         });
@@ -97,16 +96,16 @@ class Transaccion{
         console.log(vector)
     }
 
-    modificarTransaccion(e, vector, id, contenedor){
+    modificarTransaccion(e){
         document.getElementById("añadir").setAttribute("id", "confirmar");
         document.getElementById("confirmar").textContent = "Confirmar";
         
-        if(e.target.closest(".transaccion").closest("#campoIngresos").id == "campoIngresos"){
+        if(e.target.closest(".transaccion").dataset.tipo == "Ingreso"){
             document.getElementById("tipo").selectedIndex = 1;
-        }else if(e.target.closest(".transaccion").closest("#campoGastos").id == "campoGastos"){
+        }else if(e.target.closest(".transaccion").dataset.tipo == "Gasto"){
             document.getElementById("tipo").selectedIndex = 2;
         }
-
+        
         document.getElementById("valor").value = e.target.closest(".transaccion").querySelector("p").textContent;
         document.getElementById("descripcion").value = e.target.closest(".transaccion").querySelector("h4").textContent;
         document.getElementById("categoria").value = e.target.closest(".transaccion").querySelector("h3").textContent;
