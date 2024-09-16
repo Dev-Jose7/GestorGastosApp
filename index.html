@@ -25,21 +25,25 @@
         <fieldset>
             <legend>Añadir transacción</legend>
             <div style="text-align: center;">
-                <select id="tipo">
+                <select id="tipo" required>
                     <option disabled selected>Tipo</option>
                     <option value="Ingreso">Ingreso</option>
                     <option value="Gasto">Gasto</option>
                 </select>
-                <input type="number" placeholder="Valor" min="0" id="valor">
-                <input type="text" placeholder="Descripcion" id="descripcion">      
-                <select id="categoria">
+                <select id="categoria" required>
                     <option disabled selected>Categoría</option>
                     <option value="salario">Salario</option>
                     <option value="bono">Bono</option>
                     <option value="arriendo">Arriendo</option>
                     <option value="servicios">Servicios</option>
                 </select>
+                <!-- <button id="añadirCategoria">+</button> -->
+                <input type="number" placeholder="Valor" min="0" id="valor" required>
+                <input type="text" placeholder="Descripcion" id="descripcion">      
+                
                 <button id="añadir">Añadir</button>
+                <button id="confirmar">Confirmar</button>
+                <button id="cancelar">Cancelar</button>
             </div>
         </fieldset>
     

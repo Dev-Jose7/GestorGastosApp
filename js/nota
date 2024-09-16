@@ -1,0 +1,71 @@
+document.getElementById("confirmar").addEventListener("click", function(){
+        if(type === "Ingreso"){
+            console.log(id + " Desde confirmarTransaccion ingresos")
+            let indice = ingresos.findIndex(objeto => objeto._id === Number(id)); //Se obtiene el indice en donde se encuentra el id de la transacción en su respectivo arreglo, este id se obtiene a traves del valor de la clase establecida en el boton modificar
+            console.log(indice)
+            if (indice !== -1) {
+                // Actualiza los valores de la transacción existente en el arreglo
+                ingresos[indice]._tipo = tipo.value;
+                ingresos[indice]._valor = valor.value;
+                ingresos[indice]._descripcion = descripcion.value;
+                ingresos[indice]._categoria = categoria.value;
+    
+                console.log(ingresos[indice])
+                // Actualiza visualmente las transacciones
+                campoIngresos.innerHTML = ''; // Limpiar el campo para actualizar todo
+                console.log(ingresos[indice]._tipo)
+                if(ingresos[indice]._tipo != "Ingreso"){
+                    gastos.push(ingresos[indice]);
+                    console.log(gastos)
+                    ingresos.splice(indice, 1)[0];
+                    gastos[0].imprimirTransaccion(gastos, campoGastos);
+                    if(ingresos.length != 0){
+                        ingresos[0].imprimirTransaccion(ingresos, campoIngresos);
+                    }
+                }else if(ingresos[indice]._tipo == "Ingreso"){
+                    ingresos[indice].imprimirTransaccion(ingresos, campoIngresos); // Mostrar las transacciones actualizadas en su campo correspondiente (.campoIngreso o .campoGasto)
+                }
+                formatearCampo();
+            }
+        }else if(type === "Gasto"){
+            console.log(id + " Desde confirmarTransaccion gastos")
+            let indice = gastos.findIndex(objeto => objeto._id === Number(id));
+            if (indice !== -1) {
+                // Actualizar los valores de la transacción existente
+                gastos[indice]._tipo = tipo.value;
+                gastos[indice]._valor = valor.value;
+                gastos[indice]._descripcion = descripcion.value;
+                gastos[indice]._categoria = categoria.value;
+
+                // Actualizar visualmente las transacciones
+                campoGastos.innerHTML = ''; // Limpiar el campo para actualizar todo
+                console.log(gastos[indice]._tipo)
+                if(gastos[indice]._tipo != "Gasto"){
+                    ingresos.push(gastos[indice]);
+                    console.log(ingresos)
+                    gastos.splice(indice, 1)[0];
+                    ingresos[0].imprimirTransaccion(ingresos, campoIngresos);
+                    if(gastos.length != 0){
+                        gastos[0].imprimirTransaccion(gastos, campoGastos);
+                    }
+                }else if(gastos[indice]._tipo == "Gasto"){
+                    gastos[indice].imprimirTransaccion(gastos, campoGastos); // Mostrar las transacciones actualizadas
+                }
+                formatearCampo();
+            }
+        }
+
+        if(ingresos.length == 0){
+            campoIngresos.innerHTML = `
+                <legend>Ingresos</legend>
+                <p>Sin transacciones</p>`;
+        }else if (gastos.length == 0){
+            campoGastos.innerHTML =  `
+                <legend>Gastos</legend>
+                <p>Sin transacciones</p>`;
+        }
+
+        console.log(ingresos);
+        console.log(gastos);
+        formatearCampo();
+    });

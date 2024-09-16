@@ -25,97 +25,85 @@ document.addEventListener("DOMContentLoaded", function(){
     let categoria = document.getElementById("categoria");
     let campoIngresos = document.getElementById("campoIngresos");
     let campoGastos = document.getElementById("campoGastos");
-    let indice = 0;
+    let id = 0;
     let type = "";
 
     let ingresos = [];
     let gastos = [];
 
-    document.getElementById("añadir").addEventListener("click", function(e){
-        document.querySelector(".transacciones").addEventListener("click", function(e){
-            indice = e.target.className; //Permite obtener el valor de la clase de los botones que tiene cada transacción ya que ahi se ingresa una clase con el valor del id de la transacción para poder identificarlo
-            type = e.target.closest(".transaccion").dataset.tipo;
-        });
+    document.getElementById("confirmar").style.display = "none";
 
-        if(e.target.id == "confirmar"){
-            console.log(indice, type);
-            console.log(type)
-            e.preventDefault()
-            confirmarTransaccion(indice, type);
-        }else{
-            if(document.getElementById("tipo").value == "Ingreso"){
-                let transaccion = new Ingreso( valor.value, descripcion.value, categoria.value);
-                ingresos.push(transaccion);
-                transaccion.sumarTransaccion(ingresos);
-                transaccion.imprimirTransaccion(ingresos, campoIngresos);
-                formatearCampo();
-                console.log(ingresos);
-            }else if(document.getElementById("tipo").value == "Gasto"){
-                let transaccion = new Gastos(valor.value, descripcion.value, categoria.value);
-                gastos.push(transaccion);
-                transaccion.sumarTransaccion(gastos);
-                transaccion.imprimirTransaccion(gastos, campoGastos);
-                formatearCampo();
-                console.log(gastos);
-            }
+    document.getElementById("añadir").addEventListener("click", function(){
+        if(tipo.value == "Ingreso" && valor.value != 0){
+            let transaccion = new Ingreso( valor.value, descripcion.value, categoria.value);
+            ingresos.push(transaccion);
+            transaccion.obtenerBalance(ingresos, gastos);
+            transaccion.imprimirTransaccion(ingresos, campoIngresos);
+            formatearCampo();
+            console.log(ingresos);
+        }else if(tipo.value == "Gasto" && valor.value != 0){
+            let transaccion = new Gastos(valor.value, descripcion.value, categoria.value);
+            gastos.push(transaccion);
+            transaccion.obtenerBalance(ingresos, gastos);
+            transaccion.imprimirTransaccion(gastos, campoGastos);
+            formatearCampo();
+            console.log(gastos);
         }
     });
-    
-    function confirmarTransaccion(id, type){
-        if(type === "Ingreso"){
-            console.log(id + " Desde confirmarTransaccion ingresos")
-            let indice = ingresos.findIndex(objeto => objeto._id === Number(id));
-            console.log(indice)
-            if (indice !== -1) {
-                // Actualizar los valores de la transacción existente en el arreglo
-                ingresos[indice]._tipo = tipo.value;
-                ingresos[indice]._valor = valor.value;
-                ingresos[indice]._descripcion = descripcion.value;
-                ingresos[indice]._categoria = categoria.value;
-    
-                console.log(ingresos[indice])
-                // Actualizar visualmente las transacciones
-                campoIngresos.innerHTML = ''; // Limpiar el campo para actualizar todo
-                console.log(ingresos[indice]._tipo)
-                if(ingresos[indice]._tipo != "Ingreso"){
-                    // let transaccion = ingresos.splice(indice, 1)[0]
-                    gastos.push(ingresos[indice]);
-                    console.log(gastos)
-                    ingresos.splice(indice, 1)[0]
-                    gastos[indice].imprimirTransaccion(gastos, campoGastos);
-                }else if(ingresos[indice]._tipo == "Ingreso"){
-                    ingresos[indice].imprimirTransaccion(ingresos, campoIngresos); // Mostrar las transacciones actualizadas en su campo correspondiente (.campoIngreso o .campoGasto)
-                }
-            }
-        }else if(type === "Gasto"){
-            console.log(id + " Desde confirmarTransaccion gastos")
-            let indice = gastos.findIndex(objeto => objeto._id === Number(id));
-            if (indice !== -1) {
-                // Actualizar los valores de la transacción existente
-                gastos[indice]._tipo = tipo.value;
-                gastos[indice]._valor = valor.value;
-                gastos[indice]._descripcion = descripcion.value;
-                gastos[indice]._categoria = categoria.value;
 
-                // Actualizar visualmente las transacciones
-                campoGastos.innerHTML = ''; // Limpiar el campo para actualizar todo
-                console.log(gastos[indice]._tipo)
-                if(gastos[indice]._tipo != "Gasto"){
-                    ingresos.push(gastos[indice]);
-                    console.log(ingresos)
-                    gastos.splice(indice, 1)[0];
-                    ingresos[indice].imprimirTransaccion(ingresos, campoIngresos);
-                }else if(gastos[indice]._tipo == "Gasto"){
-                    gastos[indice].imprimirTransaccion(gastos, campoGastos); // Mostrar las transacciones actualizadas
-                }
-            }
+    document.querySelector(".transacciones").addEventListener("click", function(e){
+        if(e.target.closest(".transaccion")){
+            id = e.target.closest(".transaccion").dataset.id; //Permite obtener el valor de la clase de los botones que tiene cada transacción ya que ahi se ingresa una clase con el valor del id de la transacción para poder identificarlo
+            type = e.target.closest(".transaccion").dataset.tipo;
+        }else{
+            e.preventDefault();
+        }
+        
+        if(e.target.id == "modificar"){
+            document.getElementById("confirmar").style.display = "inline";
+            document.getElementById("añadir").style.display = "none";
+        }
+
+        if(e.target.id == "eliminar"){
+            printDefault();
+        }
+        
+    });
+
+    document.getElementById("confirmar").addEventListener("click", function(){
+        if(type === "Ingreso"){
+            let indice = selectObject(ingresos, id);
+            ingresos[indice].confirmarTransaccion(id, type, ingresos, campoIngresos, gastos, campoGastos);
+            
+        }else if(type === "Gasto"){
+            let indice = selectObject(gastos, id);
+            gastos[indice].confirmarTransaccion(id, type, gastos, campoGastos, ingresos, campoIngresos);
         }
 
         console.log(ingresos);
         console.log(gastos);
         formatearCampo();
-        document.getElementById("confirmar").id = "añadir";
-        document.getElementById("añadir").textContent = "Añadir";
+        printDefault();
+    });
+
+    document.getElementById("cancelar").addEventListener("click", function(){
+        formatearCampo();
+    });
+
+    function selectObject(vector, id){
+        return vector.findIndex(transaccion => transaccion._id == id);
+    }
+
+    function printDefault(){
+        if(ingresos.length == 0){
+            campoIngresos.innerHTML = `
+                <legend>Ingresos</legend>
+                <p>Sin transacciones</p>`;
+        }else if (gastos.length == 0){
+            campoGastos.innerHTML =  `
+                <legend>Gastos</legend>
+                <p>Sin transacciones</p>`;
+        }
     }
 
     function formatearCampo(){
@@ -123,5 +111,7 @@ document.addEventListener("DOMContentLoaded", function(){
         valor.value = "";
         descripcion.value = ""; 
         categoria.selectedIndex = 0;
+        document.getElementById("añadir").style.display = "inline";
+        document.getElementById("confirmar").style.display = "none";
     }
 });
