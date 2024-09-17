@@ -36,18 +36,16 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("añadir").addEventListener("click", function(){
         if(tipo.value == "Ingreso" && valor.value != 0){
             let transaccion = new Ingreso( valor.value, descripcion.value, categoria.value);
-            ingresos.push(transaccion);
-            transaccion.obtenerBalance(ingresos, gastos);
-            transaccion.imprimirTransaccion(ingresos, campoIngresos);
+            transaccion.calcularBalance();
+            transaccion.imprimirTransaccion(Ingreso.datos, campoIngresos);
             formatearCampo();
-            console.log(ingresos);
+            console.log(Ingreso.datos);
         }else if(tipo.value == "Gasto" && valor.value != 0){
-            let transaccion = new Gastos(valor.value, descripcion.value, categoria.value);
-            gastos.push(transaccion);
-            transaccion.obtenerBalance(ingresos, gastos);
-            transaccion.imprimirTransaccion(gastos, campoGastos);
+            let transaccion = new Gasto(valor.value, descripcion.value, categoria.value);
+            transaccion.calcularBalance();
+            transaccion.imprimirTransaccion(Gasto.datos, campoGastos);
             formatearCampo();
-            console.log(gastos);
+            console.log(Gasto.datos);
         }
     });
 
@@ -67,21 +65,25 @@ document.addEventListener("DOMContentLoaded", function(){
         if(e.target.id == "eliminar"){
             printDefault();
         }
+
+        console.log(Ingreso.datos[0])
         
     });
 
     document.getElementById("confirmar").addEventListener("click", function(){
         if(type === "Ingreso"){
-            let indice = selectObject(ingresos, id);
-            ingresos[indice].confirmarTransaccion(id, type, ingresos, campoIngresos, gastos, campoGastos);
+            let indice = selectObject(Ingreso.datos, id);
+            Ingreso.datos[indice].confirmarTransaccion(indice, type, Ingreso.datos, campoIngresos, Gasto.datos, campoGastos);
+            console.log("Ingresé")
             
         }else if(type === "Gasto"){
-            let indice = selectObject(gastos, id);
-            gastos[indice].confirmarTransaccion(id, type, gastos, campoGastos, ingresos, campoIngresos);
+            let indice = selectObject(Gasto.datos, id);
+            Gasto.datos[indice].confirmarTransaccion(indice, type, Gasto.datos, campoGastos, Ingreso.datos, campoIngresos);
+            console.log(indice + " " + Gasto.datos[indice])
         }
 
-        console.log(ingresos);
-        console.log(gastos);
+        console.log(Ingreso.datos);
+        console.log(Gasto.datos);
         formatearCampo();
         printDefault();
     });
@@ -95,11 +97,11 @@ document.addEventListener("DOMContentLoaded", function(){
     }
 
     function printDefault(){
-        if(ingresos.length == 0){
+        if(Ingreso.datos.length == 0){
             campoIngresos.innerHTML = `
                 <legend>Ingresos</legend>
                 <p>Sin transacciones</p>`;
-        }else if (gastos.length == 0){
+        }else if (Gasto.datos.length == 0){
             campoGastos.innerHTML =  `
                 <legend>Gastos</legend>
                 <p>Sin transacciones</p>`;

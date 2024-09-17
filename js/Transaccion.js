@@ -1,13 +1,17 @@
 class Transaccion{
     static contadorId = 0;
-    static ingresos = 0;
-    static gastos = 0
+    static ingresos = [];
+    static gastos = [];
+
     constructor(tipo, valor, descripcion, categoria){
-        this._id = ++Ingreso.contadorId;
+        this._id = ++Transaccion.contadorId;
         this._tipo = tipo;
         this._valor = valor;
         this._descripcion = descripcion;
         this._categoria = categoria;
+
+        console.log(Transaccion.ingresos);
+        console.log(Transaccion.gastos)
     }
 
     getId(){
@@ -22,53 +26,32 @@ class Transaccion{
         this._valor = valor;
     }
 
-    static obtenerBalance(){
-        this.calcularBalance();
-    }
-
-    obtenerBalance(vectorIngreso, vectorGastos){
-        this.ingresos = vectorIngreso;
-        this.gastos = vectorGastos;
-
-        console.log(this.ingresos);
-        console.log(this.gastos);
-
-        this.calcularBalance();
-    }
-
-    calcularBalance(){
+    calcularBalance(){ //Método de instancia (no es estático)
         let contadorIngreso = 0;
         let contadorGasto = 0;
         let ingresoTotal = document.getElementById("valorIngreso");
-        let gastoTotal = document.getElementById("valorGasto")
-
-        if(this.ingresos.length == 0){ //Sirve para dejar valores en cero de los tipos en el balance cuando los arreglos no tengan elementos, esto por que si no tienen elementos (objetos) los arreglos, los for of no podrán recorrer dichos arreglos por que no tendrián valores 
-            ingresoTotal.textContent = 0;
-        }else if(this.ingresos.length != 0){
-            for (const objeto of this.ingresos) {
-                contadorIngreso += +objeto._valor;
-                ingresoTotal.textContent = contadorIngreso;
-                console.log(contadorIngreso, "Ingreso");
-            }
-        }
+        let gastoTotal = document.getElementById("valorGasto");
         
-        if(this.gastos.length == 0){
-            gastoTotal.textContent = 0
-        }else if(this.gastos.length != 0){
-            for (const objeto of this.gastos) {
-                contadorGasto += +objeto._valor;
-                gastoTotal.textContent = contadorGasto;
-                console.log(contadorGasto, "Gasto");
-            }
-        }
-
-        contadorIngreso = 0;
-        contadorGasto = 0;
+        Transaccion.calcularTotal(Transaccion.ingresos, contadorIngreso, ingresoTotal, "Ingreso");
+        Transaccion.calcularTotal(Transaccion.gastos, contadorGasto, gastoTotal, "Gasto");
 
         console.log(ingresoTotal + " Ingreso")
         console.log(gastoTotal + " Gasto")
         document.getElementById("saldo").textContent = Number(ingresoTotal.textContent) - Number(gastoTotal.textContent);
         console.log(valor);
+    }
+
+    static calcularTotal(transacciones, contador, elementoTotal, tipo) { //Metodo de clase (Estático)
+        if (transacciones.length === 0) {
+            elementoTotal.textContent = 0;
+        } else {
+            contador = 0; // Reiniciamos el contador
+            for (const objeto of transacciones) {
+                contador += +objeto._valor;
+            }
+            elementoTotal.textContent = contador;
+            console.log(contador, tipo);
+        }
     }
 
     imprimirTransaccion(vector, contenedor){
@@ -120,10 +103,11 @@ class Transaccion{
         }
 
         if(e.target.closest(".transaccion").dataset.tipo == "Ingreso"){
-            this.obtenerBalance(vector, this.gastos);
+            this.calcularBalance();
         }else if(e.target.closest(".transaccion").dataset.tipo == "Gasto"){
-            this.obtenerBalance(this.ingresos, vector);
+            this.calcularBalance();
         }
+        
         console.log(vector)
     }
 
@@ -145,42 +129,35 @@ class Transaccion{
         });
     }
 
-    confirmarTransaccion(id, type, vector, campo, vectorUp, campoUp){
-        console.log(id + " Desde confirmarTransaccion ingresos")
-        let indice = vector.findIndex(objeto => objeto._id === Number(id)); //Se obtiene el indice en donde se encuentra el id de la transacción en su respectivo arreglo, este id se obtiene a traves del valor de la clase establecida en el boton modificar
+    confirmarTransaccion(indice, type, vector, campo, vectorUp, campoUp){
+        console.log(" Desde confirmarTransaccion ingresos")
+         //Se obtiene el indice en donde se encuentra el id de la transacción en su respectivo arreglo, este id se obtiene a traves del valor de la clase establecida en el boton modificar
         console.log(indice)
-        if (indice !== -1) {
-            // Actualiza los valores de la transacción existente en el arreglo
-            vector[indice]._tipo = tipo.value;
-            vector[indice]._valor = valor.value;
-            vector[indice]._descripcion = descripcion.value;
-            vector[indice]._categoria = categoria.value;
+        
+        // Actualiza los valores de la transacción existente en el arreglo
+        vector[indice]._tipo = tipo.value;
+        vector[indice]._valor = valor.value;
+        vector[indice]._descripcion = descripcion.value;
+        vector[indice]._categoria = categoria.value;
 
-            console.log(vector[indice])
-            // Actualiza visualmente las transacciones
-            campo.innerHTML = ''; // Limpiar el campo para actualizar todo
-            console.log(vector[indice]._tipo)
-            if(vector[indice]._tipo != type){
-                vectorUp.push(vector[indice]);
-                vector.splice(indice, 1)[0];
-                vectorUp[0].imprimirTransaccion(vectorUp, campoUp);
-                // this.obtenerBalance(vector, vectorUp);
-                if(vector.length != 0){
-                    vector[0].imprimirTransaccion(vector, campo);
-                }
-            }else if(vector[indice]._tipo == type){
-                vector[0].imprimirTransaccion(vector, campo); // Mostrar las transacciones actualizadas en su campo correspondiente (.campoIngreso o .campoGasto)
-                // this.obtenerBalance(vectorUp, vector);
+        console.log(vector[indice])
+        // Actualiza visualmente las transacciones
+        campo.innerHTML = ''; // Limpiar el campo para actualizar todo
+        console.log(vector[indice]._tipo)
+        if(vector[indice]._tipo != type){
+            vectorUp.push(vector[indice]);
+            vector.splice(indice, 1)[0];
+            vectorUp[0].imprimirTransaccion(vectorUp, campoUp);
+            // this.obtenerBalance(vector, vectorUp);
+            if(vector.length != 0){
+                vector[0].imprimirTransaccion(vector, campo);
             }
-
-            if(type == "Ingreso"){
-                this.obtenerBalance(vector, vectorUp);
-            }
-            
-            if(type == "Gasto"){
-                this.obtenerBalance(vectorUp, vector);
-            }
+        }else if(vector[indice]._tipo == type){
+            vector[0].imprimirTransaccion(vector, campo); // Mostrar las transacciones actualizadas en su campo correspondiente (.campoIngreso o .campoGasto)
+            // this.obtenerBalance(vectorUp, vector);
         }
+
+        this.calcularBalance();
     }
     
 }

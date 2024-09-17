@@ -1,0 +1,57 @@
+Clases
+
+Clase Transaccion
+    Ingreso - Hereda de Transaccion
+    Gasto - Hereda de Transaccion
+
+En la clase Transaccion se encontrarán todos los atributos y métodos necesarios para construir y controlar una transaccion, cada transaccion es un objeto y contarán con los siguientes atributos:
+    •id = Código de identificación de la transaccion
+    •tipo = Tipo de transaccion (ingreso/gasto)
+    •valor = El monto por la cuál se hizo la transaccion
+    •descripcion = Nota acerca de la transaccion
+    •categoria = Tag o significado acerca de la transaccion
+Se deben establecer esta cantidad de parametros en el constructor para que se lleve a cabo la creación del objeto
+
+Esta clase contará con tres atributos estáticos, es decir, atributos unicamente usados por esta clase, las cuáles son 
+    •contadorId = Contador de IDs, incrementará su valor a uno cada que se instancie esta clase asignando el valor del contador al atributo id 
+
+    •ingresos = Atributo en donde se almacenará el arreglo de todas las transacciones de tipo ingreso
+
+    •gastos = Atributo en donde se almacenará el arreglo de todas las transacciones de tipo gasto
+Estas dos últimos atributos sirven para tener acceso a la "base de datos" de las transacciones
+
+Esta clase contiene siete métodos y estos permitirán manejar las transacciones que realice el usuario, estos métodos son:
+    •obtenerBalance = Permite obtener los arreglos en donde se almacenan todos las transacciones de acuerdo a su tipo para así poder realizar calculos al balance.
+
+    •calcularBalance = Realiza los calculos del balance para indicar la información sobre los saldos
+
+    •imprimirTransaccion = Crea la transacción y la imprime en su campo correspondiente en el dashboard
+
+    •opcionesTransaccion = Método interno que enlaza a los botones de una transaccion (modificar - eliminar) con sus respectivos métodos para que estos puedan funcionar
+
+    •eliminarTransaccion = Elimina una transacción tanto en su arreglo como en el campo en donde fue impreso
+
+    •modificarTransaccion = Permite obtener los valores de una transacción existente para que estos puedan ser modificados desde los campos de entrada del dashboard 
+
+    •confirmarTransaccion = Modifica los valores de una transacción ya existente actualizandola tanto en su arreglo como en el campo en donde fue impresa
+
+==========================================================================
+
+Clase Ingreso y Gasto
+
+En la clase Ingreso y Gasto se encuentra un atributo estático el cuál sirve para definir el tipo a una transaccion, el constructor de estas clases enviará sus parametros definidos como argumento a su clase padre (Transaccion) incluyendo el atributo estático para poder crear la transaccion de forma completa. De esta forma según la opción escogida por el usuario (sea registrar un ingreso o gasto) se instanciará la clase del tipo de transacción correspondiente y así crear la transacción. El atributo en cuestión es:
+    Gasto.tipo = "Gasto";
+    Ingreso.tipo = "Ingreso";
+
+==========================================================================
+
+Funcionamiento.
+El script principal es app.js ya que todas las clases se usarán en este script y se definirá eventos a los elementos HTML que componen al dashboard
+
+1. Añadir transacción:
+En app.js se registra un evento de tipo click al elemento HTML con id: añadir para que cuando se haga click en este botón se pueda crear una transaccion. Para ello en el elemento HTML "Añadir transacción" se debe completar obligatoriamente tres de los cuatro campos de entrada que contiene este elemento, los cuatro campos son:
+    select #tipo: Para los tipos de transaccion (ingreso/gasto) - obligatorio
+    select #categoria: Para añadir una categoria a la transacción - obligatorio
+    input #valor: Para añadir un valor a la transacción - obligatorio
+    input #descripcion: Para añadir una nota o comentario
+Una vez completado los tres o cuatro campos y se haga click en el botón de añadir, de acuerdo al valor (ingreso/gasto) del select #tipo se instanciará la clase del tipo correspondiente (clase Ingreso ó clase Gasto) para que de esta forma se instancie también la clase Transaccion esto debido ya que la clase Ingreso y Gasto heredan de la clase Transaccion y si una de ellas se instancia, Transaccion será instanciada.
