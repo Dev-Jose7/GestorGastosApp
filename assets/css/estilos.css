@@ -1,0 +1,79 @@
+.contenedor{
+    width: 90%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.balance{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.balance__tipo{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.transacciones{
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.transacciones fieldset{
+    width: 50%;
+}
+
+.transaccion{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.transaccion > h3,
+.transaccion > p
+.transaccion > h4{
+    flex: 0 0 calc(25% - 3vw);
+}
+
+/***LOG IN***/
+
+.formulario{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.formulario__contenedor{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 3rem;
+    padding: 4rem 2rem;
+}
+
+.formulario__titulo{
+    text-align: center;
+}
+
+.formulario__titulo h2,
+.formulario__titulo h4{
+    margin: 1rem 0;
+}
+
+.formulario__campos{
+    width: 50%;
+}
+
+.formulario__campo{
+    display: flex;
+    flex-direction: column;
+    margin: 1.5rem 0;
+}
+
+.formulario__boton{
+    text-align: center;
+}
