@@ -8,8 +8,12 @@
     <title>Dashboard</title>
 </head>
 <body>
+    <main class="contenedor dashboard">
+        <fieldset>
+            <legend>Usuario</legend>
+            <h2 id="nombre"></h2>
+        </fieldset>
 
-    <main class="contenedor">
         <fieldset class="balance">
             <legend>Balance</legend>
             <div>
@@ -63,9 +67,9 @@
         </div>
     </main>
 
-    <script src="../controllers/Transaccion.js"></script>
-    <script src="../controllers/Ingreso.js"></script>
-    <script src="../controllers/Gasto.js"></script>
-    <script src="../controllers/app.js"></script>
+    <!-- <script src="../../src/controllers/operation/Transaccion.js"></script>
+    <script src="../controllers/operation/Ingreso.js"></script>
+    <script src="../controllers/operation/Gasto.js"></script> -->
+    <script src="../../src/views/dashboard.js" type="module"></script>
 </body>
 </html>

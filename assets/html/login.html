@@ -16,14 +16,15 @@
             </div>
 
             <form class="formulario__campos">
+                <h3 id="statusLogin"></h3>
                 <div class="formulario__campo">
                     <label for="email">Correo electrónico</label>
-                    <input type="text" id="email" autocomplete="off">
+                    <input type="text" id="email" autocomplete="off" required>
                 </div>
                 
                 <div class="formulario__campo">
                     <label for="password">Contraseña</label>
-                    <input type="password" id="password">
+                    <input type="password" id="password" required>
                 </div>
 
                 <div class="formulario__boton">
@@ -35,5 +36,7 @@
             
         </fieldset>
     </main>
+
+    <script src="../../src/views/login.js" type="module"></script>
 </body>
 </html>

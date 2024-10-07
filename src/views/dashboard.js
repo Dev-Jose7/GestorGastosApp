@@ -16,32 +16,69 @@
 
 // objeto3.setValor(1000);
 // console.log(objeto3);
+import Ingreso from "../controllers/operation/Ingreso.js";
+import Gasto from "../controllers/operation/Gasto.js";
+import User from "../controllers/account/User.js";
+import { restoredInstance } from "../../assets/js/util.js";
+
+let url = document.location.href;
+let page = url.substring(url.lastIndexOf('/') + 1);
+let tipo = document.getElementById("tipo");
+let valor = document.getElementById("valor");
+let descripcion = document.getElementById("descripcion");
+let categoria = document.getElementById("categoria");
+let campoIngresos = document.getElementById("campoIngresos");
+let campoGastos = document.getElementById("campoGastos");
+let id = 0;
+let type = "";
+console.log();
+
+let ingresos = [];
+let gastos = [];
+
+function selectObject(vector, id){
+    return vector.findIndex(transaccion => transaccion._id == id);
+}
+
+function printDefault(){
+    if(Ingreso.datos.length == 0){
+        campoIngresos.innerHTML = `
+            <legend>Ingresos</legend>
+            <p>Sin transacciones</p>`;
+    }else if (Gasto.datos.length == 0){
+        campoGastos.innerHTML =  `
+            <legend>Gastos</legend>
+            <p>Sin transacciones</p>`;
+    }
+}
+
+function formatearCampo(){
+    document.getElementById("tipo").selectedIndex = 0
+    valor.value = "";
+    descripcion.value = ""; 
+    categoria.selectedIndex = 0;
+    document.getElementById("añadir").style.display = "inline";
+    document.getElementById("confirmar").style.display = "none";
+}
 
 
-document.addEventListener("DOMContentLoaded", function(){
-    let tipo = document.getElementById("tipo");
-    let valor = document.getElementById("valor");
-    let descripcion = document.getElementById("descripcion");
-    let categoria = document.getElementById("categoria");
-    let campoIngresos = document.getElementById("campoIngresos");
-    let campoGastos = document.getElementById("campoGastos");
-    let id = 0;
-    let type = "";
-
-    let ingresos = [];
-    let gastos = [];
+if(page == "dashboard.html"){
+    let account = JSON.parse(sessionStorage.getItem("account"));
+    let user = restoredInstance(User, account._name, account._email, account._password);
+    console.log(user);
+    document.getElementById("nombre").textContent = user.getName() + " " + user.getEmail();
 
     document.getElementById("confirmar").style.display = "none";
 
     document.getElementById("añadir").addEventListener("click", function(){
         if(tipo.value == "Ingreso" && valor.value != 0){
-            let transaccion = new Ingreso( valor.value, descripcion.value, categoria.value);
+            let transaccion = new Ingreso(user.getId(), valor.value, descripcion.value, categoria.value);
             transaccion.calcularBalance();
             transaccion.imprimirTransaccion(Ingreso.datos, campoIngresos);
             formatearCampo();
             console.log(Ingreso.datos);
         }else if(tipo.value == "Gasto" && valor.value != 0){
-            let transaccion = new Gasto(valor.value, descripcion.value, categoria.value);
+            let transaccion = new Gasto(user.getId(), valor.value, descripcion.value, categoria.value);
             transaccion.calcularBalance();
             transaccion.imprimirTransaccion(Gasto.datos, campoGastos);
             formatearCampo();
@@ -56,7 +93,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }else{
             e.preventDefault();
         }
-        
+
         if(e.target.id == "modificar"){
             document.getElementById("confirmar").style.display = "inline";
             document.getElementById("añadir").style.display = "none";
@@ -67,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function(){
         }
 
         console.log(Ingreso.datos[0])
-        
+
     });
 
     document.getElementById("confirmar").addEventListener("click", function(){
@@ -91,29 +128,4 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("cancelar").addEventListener("click", function(){
         formatearCampo();
     });
-
-    function selectObject(vector, id){
-        return vector.findIndex(transaccion => transaccion._id == id);
-    }
-
-    function printDefault(){
-        if(Ingreso.datos.length == 0){
-            campoIngresos.innerHTML = `
-                <legend>Ingresos</legend>
-                <p>Sin transacciones</p>`;
-        }else if (Gasto.datos.length == 0){
-            campoGastos.innerHTML =  `
-                <legend>Gastos</legend>
-                <p>Sin transacciones</p>`;
-        }
-    }
-
-    function formatearCampo(){
-        document.getElementById("tipo").selectedIndex = 0
-        valor.value = "";
-        descripcion.value = ""; 
-        categoria.selectedIndex = 0;
-        document.getElementById("añadir").style.display = "inline";
-        document.getElementById("confirmar").style.display = "none";
-    }
-});
+}

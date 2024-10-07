@@ -1,15 +1,35 @@
-class Transaccion{
+export default class Transaccion{
     static contadorId = 0;
     static ingresos = [];
     static gastos = [];
 
-    constructor(tipo, valor, descripcion, categoria){
+    static transactionData = [];
+
+    constructor(){}
+
+    // constructor(tipo, valor, descripcion, categoria){
+    //     this._id = ++Transaccion.contadorId;
+    //     this._tipo = tipo;
+    //     this._valor = valor;
+    //     this._descripcion = descripcion;
+    //     this._categoria = categoria;
+    //     Transaccion.transactionData.push(this);
+
+    //     console.log(Transaccion.transactionData)
+    //     console.log(Transaccion.ingresos);
+    //     console.log(Transaccion.gastos)
+    // }
+
+    createTransaction(user, tipo, valor, descripcion, categoria){
+        this._user = user;
         this._id = ++Transaccion.contadorId;
         this._tipo = tipo;
         this._valor = valor;
         this._descripcion = descripcion;
         this._categoria = categoria;
+        Transaccion.transactionData.push(this);
 
+        console.log(Transaccion.transactionData)
         console.log(Transaccion.ingresos);
         console.log(Transaccion.gastos)
     }
