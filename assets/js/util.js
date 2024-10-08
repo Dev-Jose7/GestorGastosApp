@@ -1,3 +1,4 @@
+
 export function completeInput(array){
     let counter = 0;
     for (let i = 0; i < array.length; i++) {
@@ -42,8 +43,10 @@ export function initSession(account){
     }
 }
 
-//Función que reconstruye una instancia después de ser transformada nuevamente en un objeto (JSON.parse) para ser utilizada porque la instancia se encontraba almacenada en formato JSON (JSON.stringify)
-//Esto se debe a que la instancia se transforma en una cadena de caracteres para almacenada en sessionStorage y ser tratada a traves de JSON. Al conventirla nuevamente en un objeto, esta no conserva sus métodos de clase; solo se almacenan los datos (propiedades).
-export function restoredInstance(clase, param1, param2, param3){
-    return new clase(param1, param2, param3);
+
+export function instanceTransaction(user){
+    user.getTransactions().createTransaction(user.getId(), "Ingreso", 6500, "Pago nomina", "Salario");
+    user.getTransactions().createTransaction(user.getId(), "Gasto", 1400, "Alquiler casa", "Arriendo");
+    user.getTransactions().createTransaction(user.getId(), "Ingreso", 2150, "Comision trabajo", "Bono");
+    user.getTransactions().createTransaction(user.getId(), "Gasto", 450, "Factura hogar", "Servicios");
 }

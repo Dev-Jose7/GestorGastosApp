@@ -27,6 +27,18 @@ export default class User{
         return this._email;
     }
 
+    getTransactions(){
+        return this._transactions;
+    }
+
+    getCategories(){
+        return this._categories;
+    }
+
+    setId(id){
+        this._id = id;
+    }
+
     static printUserData(){
         console.log("Lista de usuarios");
         for (let i = 0; i < User.userData.length; i++) {

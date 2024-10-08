@@ -1,25 +1,9 @@
-// let objeto1 = new Ingreso("Sueldo", 3000);
-// let objeto2 = new Ingreso("Pago", 4000);
-
-// console.log(objeto1);
-// console.log(objeto2);
-
-// let objeto3 = new Gastos("Arriendo", 1400);
-// let objeto4 = new Gastos("Servicios", 400);
-
-// console.log(objeto3);
-// console.log(objeto4);
-
-// console.log(objeto2.getId()); 
-// objeto2.setDescripcion("Bono");
-// console.log(objeto2); 
-
-// objeto3.setValor(1000);
-// console.log(objeto3);
 import Ingreso from "../controllers/operation/Ingreso.js";
 import Gasto from "../controllers/operation/Gasto.js";
 import User from "../controllers/account/User.js";
-import { restoredInstance } from "../../assets/js/util.js";
+import { instanceTransaction } from "../../assets/js/util.js";
+import Transaccion from "../controllers/operation/Transaccion.js";
+import Category from "../controllers/tag/Category.js";
 
 let url = document.location.href;
 let page = url.substring(url.lastIndexOf('/') + 1);
@@ -31,59 +15,28 @@ let campoIngresos = document.getElementById("campoIngresos");
 let campoGastos = document.getElementById("campoGastos");
 let id = 0;
 let type = "";
-console.log();
-
-let ingresos = [];
-let gastos = [];
-
-function selectObject(vector, id){
-    return vector.findIndex(transaccion => transaccion._id == id);
-}
-
-function printDefault(){
-    if(Ingreso.datos.length == 0){
-        campoIngresos.innerHTML = `
-            <legend>Ingresos</legend>
-            <p>Sin transacciones</p>`;
-    }else if (Gasto.datos.length == 0){
-        campoGastos.innerHTML =  `
-            <legend>Gastos</legend>
-            <p>Sin transacciones</p>`;
-    }
-}
-
-function formatearCampo(){
-    document.getElementById("tipo").selectedIndex = 0
-    valor.value = "";
-    descripcion.value = ""; 
-    categoria.selectedIndex = 0;
-    document.getElementById("añadir").style.display = "inline";
-    document.getElementById("confirmar").style.display = "none";
-}
-
+let user = {};
 
 if(page == "dashboard.html"){
-    let account = JSON.parse(sessionStorage.getItem("account"));
-    let user = restoredInstance(User, account._name, account._email, account._password);
+    let object = JSON.parse(sessionStorage.getItem("account"));
+    user = restoredUser(object._id, object._name, object._email, object._password);
+
+    instanceTransaction(user);
+    
     console.log(user);
+    user.getTransactions().updateListsUser(user.getId());
+    printSection();
     document.getElementById("nombre").textContent = user.getName() + " " + user.getEmail();
 
     document.getElementById("confirmar").style.display = "none";
 
     document.getElementById("añadir").addEventListener("click", function(){
-        if(tipo.value == "Ingreso" && valor.value != 0){
-            let transaccion = new Ingreso(user.getId(), valor.value, descripcion.value, categoria.value);
-            transaccion.calcularBalance();
-            transaccion.imprimirTransaccion(Ingreso.datos, campoIngresos);
-            formatearCampo();
-            console.log(Ingreso.datos);
-        }else if(tipo.value == "Gasto" && valor.value != 0){
-            let transaccion = new Gasto(user.getId(), valor.value, descripcion.value, categoria.value);
-            transaccion.calcularBalance();
-            transaccion.imprimirTransaccion(Gasto.datos, campoGastos);
-            formatearCampo();
-            console.log(Gasto.datos);
-        }
+        user.getTransactions().createTransaction(user.getId(), tipo.value, valor.value, descripcion.value, categoria.value);
+        formatearCampo();
+        printSection();
+        printDefault();
+        // transaccion.calcularBalance();
+        console.log(user);
     });
 
     document.querySelector(".transacciones").addEventListener("click", function(e){
@@ -103,29 +56,72 @@ if(page == "dashboard.html"){
             printDefault();
         }
 
-        console.log(Ingreso.datos[0])
-
+        // console.log(Ingreso.datos[0])
+        console.log(type, id);
     });
 
     document.getElementById("confirmar").addEventListener("click", function(){
+        let ingresoData = user.getTransactions().getListIngreso();
+        let gastoData = user.getTransactions().getListGasto();
+        
         if(type === "Ingreso"){
-            let indice = selectObject(Ingreso.datos, id);
-            Ingreso.datos[indice].confirmarTransaccion(indice, type, Ingreso.datos, campoIngresos, Gasto.datos, campoGastos);
+            let indice = selectObject(ingresoData, id);
+            ingresoData[indice].confirmarTransaccion(indice, type, ingresoData, campoIngresos, gastoData, campoGastos);
             console.log("Ingresé")
             
         }else if(type === "Gasto"){
-            let indice = selectObject(Gasto.datos, id);
-            Gasto.datos[indice].confirmarTransaccion(indice, type, Gasto.datos, campoGastos, Ingreso.datos, campoIngresos);
-            console.log(indice + " " + Gasto.datos[indice])
+            let indice = selectObject(gastoData, id);
+            gastoData[indice].confirmarTransaccion(indice, type, gastoData, campoGastos, ingresoData, campoIngresos);
+            console.log(indice + " " + gastoData[indice])
         }
 
-        console.log(Ingreso.datos);
-        console.log(Gasto.datos);
+        console.log(ingresoData);
+        console.log(gastoData);
+        user.getTransactions().updateListsUser(user.getId());
         formatearCampo();
+        printSection();
         printDefault();
     });
 
     document.getElementById("cancelar").addEventListener("click", function(){
         formatearCampo();
     });
+}
+
+//Función que reconstruye una instancia después de ser transformada nuevamente en un objeto (JSON.parse) para ser utilizada porque la instancia se encontraba almacenada en formato JSON (JSON.stringify)
+//Esto se debe a que la instancia se transforma en una cadena de caracteres para almacenada en sessionStorage y ser tratada a traves de JSON. Al conventirla nuevamente en un objeto, esta no conserva sus métodos de clase; solo se almacenan los datos (propiedades).
+function restoredUser(id, name, email, password){
+    let user = new User(name, email, password);
+    user.setId(id);
+    return user;
+}
+
+function formatearCampo(){
+    document.getElementById("tipo").selectedIndex = 0
+    valor.value = "";
+    descripcion.value = ""; 
+    categoria.selectedIndex = 0;
+    document.getElementById("añadir").style.display = "inline";
+    document.getElementById("confirmar").style.display = "none";
+}
+
+function printSection(){
+    user.getTransactions().printTransaction(user.getTransactions().getListIngreso(), campoIngresos);
+    user.getTransactions().printTransaction(user.getTransactions().getListGasto(), campoGastos);
+}
+
+function printDefault(){
+    if(user.getTransactions().getListIngreso().length == 0){
+        campoIngresos.innerHTML = `
+            <legend>Ingresos</legend>
+            <p>Sin transacciones</p>`;
+    }else if (user.getTransactions().getListGasto().length == 0){
+        campoGastos.innerHTML =  `
+            <legend>Gastos</legend>
+            <p>Sin transacciones</p>`;
+    }
+}
+
+function selectObject(vector, id){
+    return vector.findIndex(transaccion => transaccion._id == id);
 }
