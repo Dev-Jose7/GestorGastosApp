@@ -39,6 +39,15 @@ export default class User{
         this._id = id;
     }
 
+    static validateUser(email, password){
+        for (let i = 0; i < User.userData.length; i++) {
+            if(User.userData[i]._email == email && User.userData[i]._password == password){
+                return User.userData[i];
+            }
+        }
+        return false;
+    }
+
     static printUserData(){
         console.log("Lista de usuarios");
         for (let i = 0; i < User.userData.length; i++) {
@@ -46,15 +55,16 @@ export default class User{
         }
     }
 
-
-    static validateUser(email, password){
-        for (let i = 0; i < User.userData.length; i++) {
-            if(User.userData[i]._email == email && User.userData[i]._password == password){
-
-                return User.userData[i];
+    getBalance(transacciones, elementoTotal) { //Metodo de clase (Estático)
+        if (transacciones.length == 0) {
+            elementoTotal.textContent = 0;
+        } else {
+            let contador = 0; // Reiniciamos el contador
+            for (const objeto of transacciones) {
+                contador += +objeto._valor;
             }
+            elementoTotal.textContent = contador;
         }
-        return false;
     }
 
 }

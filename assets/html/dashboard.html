@@ -43,12 +43,40 @@
                 </select>
                 <!-- <button id="añadirCategoria">+</button> -->
                 <input type="number" placeholder="Valor" min="0" id="valor" required>
-                <input type="text" placeholder="Descripcion" id="descripcion">      
+                <input type="text" placeholder="Descripcion" id="descripcion">
+                <input type="date" id="fecha">
                 
                 <button id="añadir">Añadir</button>
                 <button id="confirmar">Confirmar</button>
                 <button id="cancelar">Cancelar</button>
             </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Filtrar</legend>
+            <form style="text-align: center;">
+                <input type="number" placeholder="Valor minimo" min="0">
+                <input type="number" placeholder="Valor máximo" min="0">
+
+                <select id="tipoFilter" required>
+                    <option disabled selected>Tipo</option>
+                    <option value="Ingreso">Ingreso</option>
+                    <option value="Gasto">Gasto</option>
+                </select>
+
+                <select id="categoriaFilter" required>
+                    <option disabled selected>Categoría</option>
+                    <option value="salario">Salario</option>
+                    <option value="bono">Bono</option>
+                    <option value="arriendo">Arriendo</option>
+                    <option value="servicios">Servicios</option>
+                </select>
+
+                <input type="date" id="fechaFilter">
+
+                <button id="filter">Filtrar</button>
+                <button id="cleanFilter">Limpiar</button>
+            </form>
         </fieldset>
     
         <div class="transacciones">

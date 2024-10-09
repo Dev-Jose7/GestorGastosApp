@@ -8,6 +8,7 @@ import Category from "../controllers/tag/Category.js";
 let url = document.location.href;
 let page = url.substring(url.lastIndexOf('/') + 1);
 let tipo = document.getElementById("tipo");
+let fecha = document.getElementById("fecha")
 let valor = document.getElementById("valor");
 let descripcion = document.getElementById("descripcion");
 let categoria = document.getElementById("categoria");
@@ -20,67 +21,60 @@ let user = {};
 if(page == "dashboard.html"){
     let object = JSON.parse(sessionStorage.getItem("account"));
     user = restoredUser(object._id, object._name, object._email, object._password);
-
     instanceTransaction(user);
+    console.log(user)
     
-    console.log(user);
-    user.getTransactions().updateListsUser(user.getId());
-    printSection();
-    document.getElementById("nombre").textContent = user.getName() + " " + user.getEmail();
+    document.addEventListener("DOMContentLoaded", function(){
+        user.getTransactions().updateListsUser(user.getId());
+        calculateBalance();
+        printSection();
+    });
+
+    document.getElementById("nombre").textContent = "Bienvenido " + user.getName();
 
     document.getElementById("confirmar").style.display = "none";
 
     document.getElementById("añadir").addEventListener("click", function(){
-        user.getTransactions().createTransaction(user.getId(), tipo.value, valor.value, descripcion.value, categoria.value);
-        formatearCampo();
-        printSection();
-        printDefault();
-        // transaccion.calcularBalance();
-        console.log(user);
-    });
-
-    document.querySelector(".transacciones").addEventListener("click", function(e){
-        if(e.target.closest(".transaccion")){
-            id = e.target.closest(".transaccion").dataset.id; //Permite obtener el valor de la clase de los botones que tiene cada transacción ya que ahi se ingresa una clase con el valor del id de la transacción para poder identificarlo
-            type = e.target.closest(".transaccion").dataset.tipo;
-        }else{
-            e.preventDefault();
-        }
-
-        if(e.target.id == "modificar"){
-            document.getElementById("confirmar").style.display = "inline";
-            document.getElementById("añadir").style.display = "none";
-        }
-
-        if(e.target.id == "eliminar"){
-            printDefault();
-        }
-
-        // console.log(Ingreso.datos[0])
-        console.log(type, id);
-    });
-
-    document.getElementById("confirmar").addEventListener("click", function(){
-        let ingresoData = user.getTransactions().getListIngreso();
-        let gastoData = user.getTransactions().getListGasto();
-        
-        if(type === "Ingreso"){
-            let indice = selectObject(ingresoData, id);
-            ingresoData[indice].confirmarTransaccion(indice, type, ingresoData, campoIngresos, gastoData, campoGastos);
-            console.log("Ingresé")
-            
-        }else if(type === "Gasto"){
-            let indice = selectObject(gastoData, id);
-            gastoData[indice].confirmarTransaccion(indice, type, gastoData, campoGastos, ingresoData, campoIngresos);
-            console.log(indice + " " + gastoData[indice])
-        }
-
-        console.log(ingresoData);
-        console.log(gastoData);
+        user.getTransactions().getManager().createTransaction(user.getId(), tipo.value, valor.value, descripcion.value, categoria.value, fecha.value);
         user.getTransactions().updateListsUser(user.getId());
         formatearCampo();
         printSection();
-        printDefault();
+        calculateBalance();
+        console.log(user);
+    });
+
+
+    document.querySelector(".transacciones").addEventListener("click", function(e) {
+
+        if(e.target.tagName == "BUTTON"){
+            let button = e.target;
+
+            if(button.className == "modificar") {
+                console.log("Modificando");
+                document.getElementById("confirmar").style.display = "inline";
+                document.getElementById("añadir").style.display = "none";
+                id = button.closest(".transaccion").dataset.id;
+                editTransaction(button);
+            }
+        
+            if(button.className == "eliminar") {
+                console.log("Eliminando");
+                id = button.closest(".transaccion").dataset.id;
+                user.getTransactions().getManager().deleteTransaction(id, button.closest(".transaccion"));
+                user.getTransactions().updateListsUser(user.getId());
+                calculateBalance();
+                printSection();
+            }
+            
+        }
+    });
+
+    document.getElementById("confirmar").addEventListener("click", function(){
+        user.getTransactions().getManager().updateTransaction(id)
+        user.getTransactions().updateListsUser(user.getId());
+        calculateBalance();
+        formatearCampo();
+        printSection();
     });
 
     document.getElementById("cancelar").addEventListener("click", function(){
@@ -106,8 +100,9 @@ function formatearCampo(){
 }
 
 function printSection(){
-    user.getTransactions().printTransaction(user.getTransactions().getListIngreso(), campoIngresos);
-    user.getTransactions().printTransaction(user.getTransactions().getListGasto(), campoGastos);
+    user.getTransactions().getManager().printTransaction(user.getTransactions().getListIngreso(), campoIngresos);
+    user.getTransactions().getManager().printTransaction(user.getTransactions().getListGasto(), campoGastos);
+    printDefault();
 }
 
 function printDefault(){
@@ -115,13 +110,43 @@ function printDefault(){
         campoIngresos.innerHTML = `
             <legend>Ingresos</legend>
             <p>Sin transacciones</p>`;
-    }else if (user.getTransactions().getListGasto().length == 0){
-        campoGastos.innerHTML =  `
+    }
+
+    if(user.getTransactions().getListGasto().length == 0){
+            campoGastos.innerHTML =  `
             <legend>Gastos</legend>
             <p>Sin transacciones</p>`;
     }
 }
 
-function selectObject(vector, id){
-    return vector.findIndex(transaccion => transaccion._id == id);
+function editTransaction(e) {
+    let transactionNode = document.querySelectorAll(".transaccion")
+    let transactionList = [...transactionNode];
+    transactionList.forEach(transaction => transaction.style.color = "#000")
+    e.closest(".transaccion").style.color = "gray";
+
+
+    if (e.closest(".transaccion").dataset.tipo == "Ingreso") {
+        document.getElementById("tipo").selectedIndex = 1;
+    } else if (e.closest(".transaccion").dataset.tipo == "Gasto") {
+        document.getElementById("tipo").selectedIndex = 2;
+    }
+
+    document.getElementById("valor").value = e.closest(".transaccion").querySelector("p").textContent;
+    document.getElementById("descripcion").value = e.closest(".transaccion").querySelector("h4").textContent;
+    document.getElementById("categoria").value = e.closest(".transaccion").querySelector("h3").textContent;
+
+    document.getElementById("cancelar").addEventListener("click", function () {
+        e.closest(".transaccion").style.color = "unset";
+    });
+}
+
+function calculateBalance() {
+    let ingresoTotal = document.getElementById("valorIngreso");
+    let gastoTotal = document.getElementById("valorGasto");
+
+    user.getBalance(user.getTransactions().getListIngreso(), ingresoTotal);
+    user.getBalance(user.getTransactions().getListGasto(), gastoTotal);
+
+    document.getElementById("saldo").textContent = Number(ingresoTotal.textContent) - Number(gastoTotal.textContent);
 }

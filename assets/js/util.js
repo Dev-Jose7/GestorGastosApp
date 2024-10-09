@@ -1,3 +1,4 @@
+import User from "../../src/controllers/account/User.js";
 
 export function completeInput(array){
     let counter = 0;
@@ -45,8 +46,10 @@ export function initSession(account){
 
 
 export function instanceTransaction(user){
-    user.getTransactions().createTransaction(user.getId(), "Ingreso", 6500, "Pago nomina", "Salario");
-    user.getTransactions().createTransaction(user.getId(), "Gasto", 1400, "Alquiler casa", "Arriendo");
-    user.getTransactions().createTransaction(user.getId(), "Ingreso", 2150, "Comision trabajo", "Bono");
-    user.getTransactions().createTransaction(user.getId(), "Gasto", 450, "Factura hogar", "Servicios");
+    user.getTransactions().getManager().createTransaction(user.getId(), "Ingreso", 6500, "Pago nomina", "salario", "2024-10-08");
+    user.getTransactions().getManager().createTransaction(user.getId(), "Gasto", 1400, "Alquiler casa", "arriendo", "2024-10-08");
+    user.getTransactions().getManager().createTransaction(user.getId(), "Ingreso", 2150, "Comision trabajo", "bono", "2024-10-08");
+    user.getTransactions().getManager().createTransaction(user.getId(), "Gasto", 450, "Factura hogar", "servicios", "2024-10-08");
+
+    user.getTransactions().updateListsUser(user.getId());
 }
